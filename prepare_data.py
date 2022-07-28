@@ -18,11 +18,11 @@ def get_data():
     df = df[["Date", "High", "Open", "Close", "Low"]]
     print(colored('Adding indicators', 'yellow'))
 
-    df.ta.ao(
-        high="High", low="Low", slow=500,
-        fast=1, append=True
-    )
-    df.ta.sma(length=500, append=True)
+    # df.ta.ao(
+    #     high="High", low="Low", slow=500,
+    #     fast=1, append=True
+    # )
+    df.ta.sma(length=14, append=True)
     df.ta.rsi(close="Close", append=True)
     df.ta.atr(close="Close", high="High", low="Low", append=True)
     df.ta.stdev(close="Close", append=True)
