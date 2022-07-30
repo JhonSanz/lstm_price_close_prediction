@@ -1,5 +1,6 @@
 import yfinance as yf
 from datetime import datetime
+from termcolor import colored
 import joblib
 from keras.models import load_model
 import numpy as pd
@@ -9,7 +10,7 @@ import numpy as np
 
 
 df = yf.download(
-    "^GSPC", start=datetime(2022, 7, 1),
+    "^NDX", start=datetime(2022, 7, 1),
     interval='30m'
 )
 df.reset_index(inplace=True)
@@ -37,4 +38,8 @@ prediction = scaler.inverse_transform([[prediction] * 5 + [prediction]])
 comparisson = df[["Datetime", "Close"]]
 result = comparisson.iloc[[-1]]
 result["prediction"] = prediction[0][-1]
+
+
+print(df_copy)
+print(colored('\n *** Predicted value *** \n', 'yellow'))
 print(result)
