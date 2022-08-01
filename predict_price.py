@@ -7,22 +7,21 @@ import numpy as pd
 import pandas as pd
 import pandas_ta as ta
 import numpy as np
+from add_indicators import add_indicators, get_column_indicators
 
 
 APPROACH = "second"
-SHIFT = 0
+SHIFT = 25
 
 df = yf.download(
-    "^NDX", start=datetime(2022, 7, 1),
+    "^NDX", start=datetime(2022, 6, 1),
     interval='30m'
 )
 df.reset_index(inplace=True)
-df.ta.sma(length=14, append=True)
-df.ta.rsi(close="Close", append=True)
-df.ta.atr(close="Close", high="High", low="Low", append=True)
-df.ta.stdev(close="Close", append=True)
+add_indicators(df)
+df.dropna(inplace=True)
 
-df = df[["Datetime", "Close", "SMA_14",	"RSI_14", "ATRr_14", "STDEV_30"]]
+df = df[["Datetime", "Close"] + get_column_indicators(df)]
 df = df.loc[:]
 df["extra"] = 0
 df_copy = df.iloc[
@@ -45,7 +44,7 @@ prediction = scaler.inverse_transform([[prediction] * 5 + [prediction]])
 
 if SHIFT != 0:
     comparisson = df[["Datetime", "Close"]]
-    result = comparisson.iloc[[-1]]
+    result = comparisson.iloc[[(df.shape[0] if SHIFT == 0 else -1 * SHIFT)]]
     result["prediction"] = prediction[0][-1]
     print(df_copy)
     print(colored('\n *** Predicted value *** \n', 'yellow'))
