@@ -3,6 +3,7 @@ from constant import CANDLES_HISTORY, COLUMNS_ORIGINAL
 
 
 def add_indicators(df):
+    # df.ta.sma(length=200, append=True)
     df.ta.sma(length=CANDLES_HISTORY, append=True)
     df.ta.sma(length=5, append=True)
     df.ta.stdev(length=CANDLES_HISTORY, close="Close", append=True)

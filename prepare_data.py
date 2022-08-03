@@ -1,4 +1,4 @@
-from numpy import append
+import numpy as np
 from termcolor import colored
 import pandas as pd
 import pandas_ta as ta
@@ -17,9 +17,10 @@ def get_data():
         ]
     )
     df["Date"] = df["Date"] + " " + df["Time"]
+    df["Date"] = pd.to_datetime(df["Date"], format="%Y.%m.%d %H:%M")
     df = df[["Date", "High", "Open", "Close", "Low"]]
-
     print(colored('Adding indicators...', 'yellow'))
+    # df["timestamp"] = df["Date"].values.astype(np.int64) // 10 ** 9
     add_indicators(df)
     df.dropna(inplace=True)
 
