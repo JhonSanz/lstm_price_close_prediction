@@ -18,9 +18,12 @@ def get_data():
     )
     df["Date"] = df["Date"] + " " + df["Time"]
     df["Date"] = pd.to_datetime(df["Date"], format="%Y.%m.%d %H:%M")
-    df = df[["Date", "High", "Open", "Close", "Low"]]
+    df["Zigzag"] = df["ZigzagMax"] + df["ZigzagMin"]
+    df.loc[df["Zigzag"] > 0, "Zigzag"] = 1
+
+    df = df[["Date", "High", "Open", "Close", "Low", "Zigzag"]]
     print(colored('Adding indicators...', 'yellow'))
-    # df["timestamp"] = df["Date"].values.astype(np.int64) // 10 ** 9
+    df["timestamp"] = df["Date"].values.astype(np.int64) // 10 ** 9
     add_indicators(df)
     df.dropna(inplace=True)
 
@@ -28,6 +31,7 @@ def get_data():
         f'Predict {CANDLES_PREDICTION} candles in the future', 'yellow'
     ))
     df["prediction"] = df["Close"].shift(-CANDLES_PREDICTION)
+    df["Zigzag"] = df["Zigzag"].shift(-CANDLES_PREDICTION)
 
     df = df.iloc[CANDLES_HISTORY:-1, :]
     df.reset_index(inplace=True, drop=True)
