@@ -5,7 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 from check_code import check_split
 import math, random
 from check_code import check_train_data_shape, check_total
-from lstm_model import generate_model
+from lstm_model import generate_model, make_predictions
 
 class Clasify:
     CANDLES_HISTORY = 20
@@ -75,21 +75,23 @@ class Clasify:
 
     def get_model(self):
         model = generate_model(self.X.shape)
+        make_predictions(model, {
+            "x_train": self.x_train,
+            "y_train": self.y_train,
+            "x_test": self.x_test,
+            "y_test": self.y_test
+        })
 
     def run(self, data):
         self.get_scaled_data(data)
-        self.get_test_data()
         self.get_train_data()
+        self.get_test_data()
         self.get_model()
 
-if __name__ == "main":
-    import os
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
-    data = Labeler(
-        "NAS100_M10_201707030100_202209292350.csv", "200_200_totals.csv"
-    ).run()
-    useful_columns = [x for x in data.columns if x not in ["date", "spread"]]
-    data = data[useful_columns]
-    clasify = Clasify().run(data)
+data = Labeler(
+    "NAS100_M10_201707030100_202209292350.csv", "200_200_totals.csv"
+).run()
+useful_columns = [x for x in data.columns if x not in ["date", "spread"]]
+data = data[useful_columns]
+clasify = Clasify().run(data)
 

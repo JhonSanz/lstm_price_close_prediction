@@ -1,5 +1,7 @@
 from keras.models import Sequential
+from keras.callbacks import EarlyStopping, ModelCheckpoint, TensorBoard
 from keras.layers import Dense, LSTM, Dropout
+import pandas as pd
 
 def generate_model(shape):
     model = Sequential()
@@ -18,3 +20,27 @@ def generate_model(shape):
     model.add(Dense(1, activation='sigmoid'))
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=["accuracy"])
     return model
+
+def make_predictions(model, data):
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=300)
+    checkpoint = ModelCheckpoint(
+        'resources/model/best_model_checkpoint.h5',
+        # monitor='val_accuracy',
+        # mode='max',
+        monitor='val_loss',
+        mode='min',
+        verbose=1,
+        save_best_only=True
+    )
+    log_dir = "logs/fit"
+    tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
+    history = model.fit(
+        data["x_train"], data["y_train"], batch_size=128, epochs=5,
+        validation_data=(data["x_test"], data["y_test"]),
+        callbacks=[checkpoint, tensorboard_callback, es]
+    )
+    model.save('resources/model/my_model_sequential.h5')
+
+    hist_df = pd.DataFrame(history.history)
+    with open('resources/model/history_sequential.csv', mode='w') as f:
+        hist_df.to_csv(f)
