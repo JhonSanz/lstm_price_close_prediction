@@ -15,8 +15,8 @@ class Labeler:
         self.file_orders = pd.read_csv(self.file_orders)
         self.file_data = DataGetter().get_initial_data(self.file_data)
         self.file_data["operable"] = self.OPERABLE
-        self.file_data["sma_high"] = self.file_data.ta.sma(close=self.file_data["high"], length=404)
-        self.file_data["sma_low"] = self.file_data.ta.sma(close=self.file_data["low"], length=404)
+        self.file_data["sma_high"] = self.file_data.ta.sma(close=self.file_data["high"], length=200)
+        self.file_data["sma_low"] = self.file_data.ta.sma(close=self.file_data["low"], length=200)
         self.file_data.dropna(inplace=True)
         self.file_data.reset_index(inplace=True, drop=True)
 
