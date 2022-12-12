@@ -23,20 +23,20 @@ class Labeler:
     def label_data(self):
         self.file_data.loc[
             (
-                (self.file_data["sma_high"] <= self.file_data["open"]) &
-                (self.file_data["open"] <= self.file_data["sma_low"])
+                (self.file_data["open"] <= self.file_data["sma_high"] ) &
+                (self.file_data["open"] >= self.file_data["sma_low"])
             ) |
             (
-                (self.file_data["sma_high"] <= self.file_data["high"]) &
-                (self.file_data["high"] <= self.file_data["sma_low"])
+                (self.file_data["high"] <= self.file_data["sma_high"]) &
+                (self.file_data["high"] >= self.file_data["sma_low"])
             ) |
             (
-                (self.file_data["sma_high"] <= self.file_data["low"]) &
-                (self.file_data["low"] <= self.file_data["sma_low"])
+                (self.file_data["low"] <= self.file_data["sma_high"]) &
+                (self.file_data["low"] >= self.file_data["sma_low"])
             ) |
             (
-                (self.file_data["sma_high"] <= self.file_data["close"]) &
-                (self.file_data["close"] <= self.file_data["sma_low"])
+                (self.file_data["close"] <= self.file_data["sma_high"]) &
+                (self.file_data["close"] >= self.file_data["sma_low"])
             ),
             "operable"
         ] = self.UNOPERABLE

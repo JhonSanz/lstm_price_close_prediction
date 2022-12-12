@@ -35,7 +35,7 @@ def make_predictions(model, data):
     log_dir = "logs/fit"
     tensorboard_callback = TensorBoard(log_dir=log_dir, histogram_freq=1)
     history = model.fit(
-        data["x_train"], data["y_train"], batch_size=128, epochs=5,
+        data["x_train"], data["y_train"], batch_size=128, epochs=200,
         validation_data=(data["x_test"], data["y_test"]),
         callbacks=[checkpoint, tensorboard_callback, es]
     )

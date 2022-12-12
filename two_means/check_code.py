@@ -2,6 +2,13 @@ import pandas as pd
 import random, math
 
 def check_split(df, scaler, CANDLES_HISTORY, X, Y):
+    """
+        To verify we have to take the CANDLES_HISTORY + RANDOM_VALUE position
+        in the Y vector because X is an sliced vector.
+
+        Notice that in the original data were deleted the amount of rows
+        used to compute the indicators due to the .dropna()
+    """
     RANDOM_VALUE = random.randint(0, len(Y))
     check_split_df = pd.DataFrame(X[CANDLES_HISTORY + RANDOM_VALUE])
     check_split_df["prediction"] = Y[RANDOM_VALUE:CANDLES_HISTORY + RANDOM_VALUE]
@@ -14,8 +21,6 @@ def check_split(df, scaler, CANDLES_HISTORY, X, Y):
 
 def check_train_data_shape(X, Y):
     return X.shape[0] == Y.shape[0]
-
-
 
 def check_total(y_test, Y, PERCENTAGE_DATA, training_data_len, y_train, shrink):
     def get_len(samples):

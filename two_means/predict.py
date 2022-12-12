@@ -22,17 +22,48 @@ class Clasify:
         self.y_test = None
         self.y_test = None
 
-    def get_dataset(self, train_data):
+    def get_dataset_x(self, train_data):
+        """
+            Creates slices of len self.CANDLES_HISTORY, without including the
+            last column. So, each position in x_train is a
+            (self.CANDLES_HISTORY, len(data.columns) - 1) len vector
+
+            The position x_train[0] corresponds to the first position in the
+            dataframe. Notice that if we compute some indicator, some rows
+            are going to be deleted because the .dropna()
+
+            Example x_train, with self.CANDLES_HISTORY=3 ->
+            [[5609.1    5612.1    5609.     5611.2    5631.742  5627.2265]
+            [5611.1    5612.4    5607.5    5611.5    5631.479  5626.9825]
+            [5611.4    5614.     5611.1    5613.1    5631.228  5626.7605]]
+
+            Be aware of the scaler, it's going to convert the values from the 
+            original data.
+        """
         x_train = []
         for i in range(self.CANDLES_HISTORY, len(train_data)):
             x_train.append(train_data[i-self.CANDLES_HISTORY:i, :-1])
         return np.array(x_train)
 
+    def get_dataset_y(self, scaled_data):
+        """
+            Here we are taking only the last colum of the dataset, which corresponds to the
+            expected value. Notice that for each slice of data in every position of the
+            x_train vector is only assigned a single value in the y_train vector.
+
+            Example y_train[0] -> 1
+            Corresponds to x_train[0] ->
+            [[5609.1    5612.1    5609.     5611.2    5631.742  5627.2265]
+            [5611.1    5612.4    5607.5    5611.5    5631.479  5626.9825]
+            [5611.4    5614.     5611.1    5613.1    5631.228  5626.7605]]
+        """
+        return np.array(scaled_data[self.CANDLES_HISTORY:len(scaled_data), -1])
+
     def get_scaled_data(self, data):
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_data = scaler.fit_transform(data.values)
-        X = self.get_dataset(scaled_data)
-        Y = np.array(scaled_data[self.CANDLES_HISTORY:len(scaled_data), -1])
+        X = self.get_dataset_x(scaled_data)
+        Y = self.get_dataset_y(scaled_data)
         assert check_split(data, scaler, self.CANDLES_HISTORY, X, Y)
         assert check_train_data_shape(X, Y)
         self.X = X
@@ -46,6 +77,7 @@ class Clasify:
         return zip(*zipped)
 
     def get_train_data(self):
+        """ Takes the 80% of the data as train data """
         training_data_len = math.ceil(len(self.Y) * .80)
         x_train = self.X[:training_data_len]
         y_train = self.Y[:training_data_len]
@@ -57,6 +89,7 @@ class Clasify:
         self.y_train = y_train
 
     def get_test_data(self):
+        """ Takes the 20% of the data as train data """
         training_data_len = math.ceil(len(self.Y) * .80)
         divition = training_data_len  # + (len(Y[training_data_len:]) / 5)
         shrink = math.ceil(divition)
