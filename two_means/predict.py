@@ -6,6 +6,7 @@ from check_code import check_split
 import math, random
 from check_code import check_train_data_shape, check_total
 from lstm_model import generate_model, make_predictions
+from descript_data import DataDescriptor
 
 class Clasify:
     CANDLES_HISTORY = 20
@@ -115,7 +116,15 @@ class Clasify:
             "y_test": self.y_test
         })
 
+    def reorganice_columns(self, data):
+        columns = data.columns.tolist()
+        columns = [x for x in columns if x != "operable"]
+        data = data[columns + ["operable"]]
+        return data
+
     def run(self, data):
+        data = DataDescriptor(data).run()
+        data = self.reorganice_columns(data)
         self.get_scaled_data(data)
         self.get_train_data()
         self.get_test_data()
@@ -127,4 +136,3 @@ data = Labeler(
 useful_columns = [x for x in data.columns if x not in ["date", "spread"]]
 data = data[useful_columns]
 clasify = Clasify().run(data)
-

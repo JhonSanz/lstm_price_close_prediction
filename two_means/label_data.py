@@ -50,10 +50,7 @@ class Labeler:
                 (diff < 0),
                 "operable"
             ] = self.UNOPERABLE
-        
-        columns = self.file_data.columns.tolist()
-        columns = [x for x in columns if x != "operable"]
-        self.file_data = self.file_data[columns + ["operable"]]
+
         return self.file_data
 
     def run(self):
