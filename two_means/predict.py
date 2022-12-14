@@ -130,16 +130,26 @@ class Clasify:
         self.get_test_data()
         self.get_model()
 
+import os
+from shutil import rmtree
+
+if os.path.exists("resources/model"):
+    rmtree("resources/model")
+if os.path.exists("resources/parameters"):
+    rmtree("resources/parameters")
+if os.path.exists("logs/fit"):
+    rmtree("logs/fit")
+
 data = Labeler(
     "NAS100_M10_201707030100_202209292350.csv", "zigzag_labeler.csv"
 ).run()
+useful_columns = [x for x in data.columns if x not in ["date", "spread"]]
+data = data[useful_columns]
 # print(
 #     data.loc[
 #         (data["date"] >= "2017-09-14 21:20") &
 #         (data["date"] <= "2017-09-15 03:20")
 #     ]
 # )
-useful_columns = [x for x in data.columns if x not in ["date", "spread"]]
-data = data[useful_columns]
-print(data.tail())
+# print(data.tail())
 clasify = Clasify().run(data)
