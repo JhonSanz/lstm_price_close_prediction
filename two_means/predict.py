@@ -118,8 +118,8 @@ class Clasify:
 
     def reorganice_columns(self, data):
         columns = data.columns.tolist()
-        columns = [x for x in columns if x != "operable"]
-        data = data[columns + ["operable"]]
+        columns = [x for x in columns if x != "trend"]
+        data = data[columns + ["trend"]]
         return data
 
     def run(self, data):
@@ -131,8 +131,15 @@ class Clasify:
         self.get_model()
 
 data = Labeler(
-    "NAS100_M10_201707030100_202209292350.csv", "200_200_totals.csv"
+    "NAS100_M10_201707030100_202209292350.csv", "zigzag_labeler.csv"
 ).run()
+# print(
+#     data.loc[
+#         (data["date"] >= "2017-09-14 21:20") &
+#         (data["date"] <= "2017-09-15 03:20")
+#     ]
+# )
 useful_columns = [x for x in data.columns if x not in ["date", "spread"]]
 data = data[useful_columns]
+print(data.tail())
 clasify = Clasify().run(data)
