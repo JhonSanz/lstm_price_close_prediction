@@ -24,13 +24,14 @@ import pandas as pd
 def generate_model(shape):
     model = Sequential()
     model.add(LSTM(
-        units=50,
+        units=1,
         # return_sequences=False,
         return_sequences=True,
         input_shape=(shape[1], shape[-1])
     ))
-    model.add(Dropout(0.2))
-    model.add(LSTM(units=10, return_sequences=False))
+    # model.add(Dropout(0.2))
+    model.add(LSTM(units=2, return_sequences=False))
+    # model.add(LSTM(units=3, return_sequences=False))
     # model.add(Dropout(0.2))
     # model.add(LSTM(units=10, return_sequences=False))
     model.add(Dense(1, activation='sigmoid'))

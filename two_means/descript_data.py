@@ -14,14 +14,15 @@ TODO:
 10. incremento de cada desviación (resta del valor actual y el anterior)
 """
 class DataDescriptor:
-    MOVING_AVERAGES = 10
-    STANDARD_DEVIATIONS = 10
+    LOW_LIMIT = 5
+    MOVING_AVERAGES = 6
+    STANDARD_DEVIATIONS = 6
 
     def __init__(self, data):
         self.data = data
     
     def add_moving_averrages(self, data):
-        for i in range(1, self.MOVING_AVERAGES + 1):
+        for i in range(self.LOW_LIMIT, self.MOVING_AVERAGES + 1):
             periods = i * 100
             data[f"sma_{periods}"] = (
                 data.ta.sma(
@@ -31,7 +32,7 @@ class DataDescriptor:
         return data
 
     def distance_from_close_to_moving_average(self, data):
-        for i in range(1, self.MOVING_AVERAGES + 1):
+        for i in range(self.LOW_LIMIT, self.MOVING_AVERAGES + 1):
             periods = i * 100
             data[f"close_mean_{periods}_diff"] = np.abs(
                 data["close"] - data[f"sma_{periods}"]
@@ -40,7 +41,7 @@ class DataDescriptor:
 
     def average_of_moving_averrages(self, data):
         data["average_of_moving_averages"] = 0
-        for i in range(1, self.MOVING_AVERAGES + 1):
+        for i in range(self.LOW_LIMIT, self.MOVING_AVERAGES + 1):
             periods = i * 100
             data["average_of_moving_averages"] += data[f"sma_{periods}"]
         data["average_of_moving_averages"] /= self.MOVING_AVERAGES
@@ -48,7 +49,7 @@ class DataDescriptor:
 
     def average_of_distances_from_close(self, data):
         data["average_of_distances_from_close"] = 0
-        for i in range(1, self.MOVING_AVERAGES + 1):
+        for i in range(self.LOW_LIMIT, self.MOVING_AVERAGES + 1):
             periods = i * 100
             data["average_of_distances_from_close"] += data[f"close_mean_{periods}_diff"]
         data["average_of_distances_from_close"] /= self.MOVING_AVERAGES
@@ -67,7 +68,7 @@ class DataDescriptor:
         return data
 
     def add_standard_deviations(self, data):
-        for i in range(1, self.STANDARD_DEVIATIONS + 1):
+        for i in range(self.LOW_LIMIT, self.STANDARD_DEVIATIONS + 1):
             periods = i * 100
             data[f"stdev_{periods}"] = (
                 data.ta.stdev(
@@ -78,20 +79,20 @@ class DataDescriptor:
     
     def average_of_standard_deviations(self, data):
         data["average_of_standard_deviations"] = 0
-        for i in range(1, self.STANDARD_DEVIATIONS + 1):
+        for i in range(self.LOW_LIMIT, self.STANDARD_DEVIATIONS + 1):
             periods = i * 100
             data["average_of_standard_deviations"] += data[f"stdev_{periods}"]
         data["average_of_standard_deviations"] /= self.STANDARD_DEVIATIONS
         return data
 
     def did_moving_average_increase(self, data):
-        for i in range(1, self.MOVING_AVERAGES + 1):
+        for i in range(self.LOW_LIMIT, self.MOVING_AVERAGES + 1):
             periods = i * 100
             data[f"did_moving_average_{periods}_increase"] = data[f"sma_{periods}"].diff()
         return data
 
     def did_standard_deviation_increase(self, data):
-        for i in range(1, self.STANDARD_DEVIATIONS + 1):
+        for i in range(self.LOW_LIMIT, self.STANDARD_DEVIATIONS + 1):
             periods = i * 100
             data[f"did_standard_deviation_{periods}_increase"] = data[f"stdev_{periods}"].diff()
         return data

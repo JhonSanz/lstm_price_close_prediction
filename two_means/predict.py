@@ -9,7 +9,8 @@ from lstm_model import generate_model, make_predictions
 from descript_data import DataDescriptor
 
 class Clasify:
-    CANDLES_HISTORY = 20
+    RATIO_DATA = 0.7
+    CANDLES_HISTORY = 80
     PERCENTAGE_DATA = 0
 
     def __init__(self):
@@ -83,8 +84,8 @@ class Clasify:
         return zip(*zipped)
 
     def get_train_data(self):
-        """ Takes the 80% of the data as train data """
-        training_data_len = math.ceil(len(self.Y) * .80)
+        """ Takes the self.RATIO_DATA of the data as train data """
+        training_data_len = math.ceil(len(self.Y) * self.RATIO_DATA)
         x_train = self.X[:training_data_len]
         y_train = self.Y[:training_data_len]
         x_train, y_train = self.zip_data(x_train, y_train)
@@ -95,8 +96,8 @@ class Clasify:
         self.y_train = y_train
 
     def get_test_data(self):
-        """ Takes the 20% of the data as train data """
-        training_data_len = math.ceil(len(self.Y) * .80)
+        """ Takes the (1 - self.RATIO_DATA) of the data as train data """
+        training_data_len = math.ceil(len(self.Y) * self.RATIO_DATA)
         divition = training_data_len  # + (len(Y[training_data_len:]) / 5)
         shrink = math.ceil(divition)
         x_test = self.X[shrink:-1]
@@ -125,6 +126,8 @@ class Clasify:
         columns = data.columns.tolist()
         columns = [x for x in columns if x != "trend"]
         data = data[columns + ["trend"]]
+        print(data.columns.tolist())
+        print(len(data))
         return data
 
     def run(self, data):

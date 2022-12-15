@@ -27,7 +27,14 @@ def check_split(df, scaler, CANDLES_HISTORY, X, Y):
     # and vector takes the index - 1 because is 0-indexed
     original_df = scaler.transform(df.loc[RANDOM_VALUE:(CANDLES_HISTORY + RANDOM_VALUE - 1)].values)
     original_df = pd.DataFrame(original_df)
-    return (check_split_df.values == original_df.values).all()
+    return (
+        (check_split_df.values == original_df.values).all(),
+        f"""
+            {RANDOM_VALUE}, \n
+            {check_split_df.values}, \n
+            {original_df.values}, \n
+        """
+    )
 
 def check_train_data_shape(X, Y):
     return X.shape[0] == Y.shape[0]
