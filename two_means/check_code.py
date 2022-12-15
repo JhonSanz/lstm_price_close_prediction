@@ -23,7 +23,8 @@ def check_split(df, scaler, CANDLES_HISTORY, X, Y):
     RANDOM_VALUE = random.randint(0, len(Y))
     check_split_df = pd.DataFrame(X[RANDOM_VALUE])
     check_split_df["prediction"] = Y[RANDOM_VALUE:CANDLES_HISTORY + RANDOM_VALUE]
-    # Here we have to substract 1 because .loc takes the row given the exact label
+    # Here we have to substract 1 because .loc takes the row given the exact label,
+    # and vector takes the index - 1 because is 0-indexed
     original_df = scaler.transform(df.loc[RANDOM_VALUE:(CANDLES_HISTORY + RANDOM_VALUE - 1)].values)
     original_df = pd.DataFrame(original_df)
     return (check_split_df.values == original_df.values).all()

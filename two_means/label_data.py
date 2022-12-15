@@ -15,10 +15,6 @@ class Labeler:
         self.file_orders = pd.read_csv(self.file_orders)
         self.file_data = DataGetter().get_initial_data(self.file_data)
         self.file_data["trend"] = self.OPERABLE
-        self.file_data["sma_high"] = self.file_data.ta.sma(close=self.file_data["high"], length=500)
-        self.file_data["sma_low"] = self.file_data.ta.sma(close=self.file_data["low"], length=500)
-        for i in range(2, 10):
-            self.file_data[f"sma_high_{i}"] = self.file_data.ta.sma(close=self.file_data["close"], length=i)
         self.file_data.dropna(inplace=True)
         self.file_data.reset_index(inplace=True, drop=True)
 
