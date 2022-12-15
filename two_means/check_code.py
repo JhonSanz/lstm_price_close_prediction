@@ -3,21 +3,30 @@ import random, math
 
 def check_split(df, scaler, CANDLES_HISTORY, X, Y):
     """
-        To verify we have to take the CANDLES_HISTORY + RANDOM_VALUE position
-        in the Y vector because X is an sliced vector.
+        To verify it we have to take the RANDOM_VALUE:CANDLES_HISTORY + RANDOM_VALUE
+        position in the Y vector because X is an sliced vector.
+
+        And to get X we have to access the CANDLES_HISTORY + RANDOM_VALUE position,
+        because for each position it stores a slice of rows, from 
+
+        Example:
+        CANDLES_HISTORY = 3
+        RANDOM_VALUE = 0
+        Y[0:3] -> [1, 1, 0]
+        X[0]: From row 0 to 2
+        X[1]: From row 1 to 3
+        X[2]: From row 2 to 4
 
         Notice that in the original data were deleted the amount of rows
         used to compute the indicators due to the .dropna()
     """
     RANDOM_VALUE = random.randint(0, len(Y))
-    check_split_df = pd.DataFrame(X[CANDLES_HISTORY + RANDOM_VALUE])
+    check_split_df = pd.DataFrame(X[RANDOM_VALUE])
     check_split_df["prediction"] = Y[RANDOM_VALUE:CANDLES_HISTORY + RANDOM_VALUE]
-    check_split_df = scaler.inverse_transform(check_split_df.values)
-    check_split_df = pd.DataFrame(check_split_df)
-    return all(
-        check_split_df.loc[0].values.round() ==
-        df.loc[CANDLES_HISTORY + RANDOM_VALUE].values.round()
-    )
+    # Here we have to substract 1 because .loc takes the row given the exact label
+    original_df = scaler.transform(df.loc[RANDOM_VALUE:(CANDLES_HISTORY + RANDOM_VALUE - 1)].values)
+    original_df = pd.DataFrame(original_df)
+    return (check_split_df.values == original_df.values).all()
 
 def check_train_data_shape(X, Y):
     return X.shape[0] == Y.shape[0]
