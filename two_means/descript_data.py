@@ -2,15 +2,15 @@ import numpy as np
 
 """
 TODO:
-1. medias de 100 en 100 hasta 1000 _
-2. distancia entre en close y cada media _
-3. promedio de todas las medias _ 
-4. promedio de las distancias _
-5. diferencia entre el high y 3. _
-6. diferencia entre el low y 3. _
-7. desviación estándar de 100 en 100 hasta 1000 _
-8. promedio de las desviaciones estándar _
-9. incremento de cada media (resta del valor actual y el anterior)
+1. medias de 100 en 100 hasta 1000
+2. distancia entre en close y cada media
+3. promedio de todas las medias 
+4. promedio de las distancias
+5. diferencia entre el high y 3.
+6. diferencia entre el low y 3.
+7. desviación estándar de 100 en 100 hasta 1000
+8. promedio de las desviaciones estándar
+9. incremento de cada media (resta del valor actual y el anterior) 
 10. incremento de cada desviación (resta del valor actual y el anterior)
 """
 class DataDescriptor:
@@ -84,6 +84,18 @@ class DataDescriptor:
         data["average_of_standard_deviations"] /= self.STANDARD_DEVIATIONS
         return data
 
+    def did_moving_average_increase(self, data):
+        for i in range(1, self.MOVING_AVERAGES + 1):
+            periods = i * 100
+            data[f"did_moving_average_{periods}_increase"] = data[f"sma_{periods}"].diff()
+        return data
+
+    def did_standard_deviation_increase(self, data):
+        for i in range(1, self.STANDARD_DEVIATIONS + 1):
+            periods = i * 100
+            data[f"did_standard_deviation_{periods}_increase"] = data[f"stdev_{periods}"].diff()
+        return data
+
     def run(self):
         data = self.data.copy()
         data = self.add_moving_averrages(data)
@@ -94,4 +106,8 @@ class DataDescriptor:
         data = self.distance_from_low_to_average_of_moving_averages(data)
         data = self.add_standard_deviations(data)
         data = self.average_of_standard_deviations(data)
+        data = self.did_moving_average_increase(data)
+        data = self.did_standard_deviation_increase(data)
+        data.dropna(inplace=True)
+        data.reset_index(inplace=True, drop=True)
         return data
