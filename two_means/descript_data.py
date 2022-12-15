@@ -34,7 +34,7 @@ class DataDescriptor:
     def distance_from_close_to_moving_average(self, data):
         for i in range(self.LOW_LIMIT, self.MOVING_AVERAGES + 1):
             periods = i * 100
-            data[f"close_mean_{periods}_diff"] = np.abs(
+            data[f"close_mean_{periods}_diff"] = (
                 data["close"] - data[f"sma_{periods}"]
             )
         return data
@@ -56,13 +56,13 @@ class DataDescriptor:
         return data
 
     def distance_from_high_to_average_of_moving_averages(self, data):
-        data["distance_from_high_to_average_of_moving_averages"] = np.abs(
+        data["distance_from_high_to_average_of_moving_averages"] = (
             data["high"] - data["average_of_moving_averages"]
         )
         return data
 
     def distance_from_low_to_average_of_moving_averages(self, data):
-        data["distance_from_low_to_average_of_moving_averages"] = np.abs(
+        data["distance_from_low_to_average_of_moving_averages"] = (
             data["low"] - data["average_of_moving_averages"]
         )
         return data
